@@ -5,18 +5,17 @@
 // ==================================================================================
 
 // ==================================================================================
-// PART 1: LOAD VISUALIZATION LAYERS (To Guide Manual Interpretation)
+// PART 1: LOAD VISUALIZATION LAYERS
 // ==================================================================================
 
 // --- AOI Definition ---
-var aoi = ee.FeatureCollection('projects/ee-xiuneng/assets/processingAndEvalAoi');
+var aoi = ee.FeatureCollection('projects/user/assets/aoi');
 Map.addLayer(aoi, {color: 'FFFFFF', strokeWidth: 2, fillColor: '00000000'}, 'Processing & Evaluation AOI', true);
 Map.centerObject(aoi, 8);
 
 // --- Load Feature Stack Asset (from Script 01) ---
-// Note: This script loads v4, which corresponds to the "Key Phenological-Stage Feature Set"
-// This asset is CRITICAL for discriminating spectrally similar classes.
-var featureStackAssetId = 'projects/ee-xiuneng/assets/FeatureStack_Landsat_2024_v4';
+
+var featureStackAssetId = 'projects/user/assets/FeatureStack_Landsat_2024_Enhanced_Masked';
 print('Loading Key Phenological-Stage Feature Set for Visualization: ' + featureStackAssetId);
 var featureStack2024;
 try {
@@ -61,7 +60,7 @@ if (featureStack2024) {
   Map.addLayer(featureStack2024.select('MNDWI_G_SWIR1_stdDev'), {min: 0, max: 0.4, palette: ['white', 'cyan']}, 'D. MNDWI Std Dev', false);
   Map.addLayer(featureStack2024.select('NDWI_G_NIR_stdDev'), {min: 0, max: 0.4, palette: ['white', 'purple']}, 'D. NDWI Std Dev', false);
 
-  // --- E. Key Phenological-Stage Features (Paddy Rice) ---
+  // --- E. Key Phenological-Stage Features (Paddy) ---
   // These layers are critical for discriminating paddy rice, aquaculture, and wetlands
   var riceWaterPalette = ['#a50026','#d73027','#f46d43','#fdae61','#fee090','#ffffbf','#e0f3f8','#abd9e9','#74add1','#4575b4','#313695'];
   var riceVegPalette = ['#8c510a','#d8b365','#f6e8c3','#c7eae5','#5ab4ac','#01665e'];
@@ -79,26 +78,17 @@ if (featureStack2024) {
 // PART 2: NEW REFERENCE SAMPLE EXPORT
 // ==================================================================================
 
-// IMPORTANT: The variables below (NW_River, NW_Lake, etc.) 
-// MUST be defined as Imports from the UI drawing tool.
-// These represent the new high-fidelity polygons drawn via manual interpretation.
 var listOfNewFeatureCollections = [
-  NW_River, NW_Lake, NW_Inland_Flat, AW_Paddy, AW_Aquaculture,
-  AW_Reservoir, Urban, DryCropland, UplandForest, Grassland, BareLand, Herbaceous_Marsh, Woody_Swamp
+  River, Lake, Mudflat, Paddy_Field, Aquaculture_Pond,
+  Reservoir, Built_up_Land, Dry_Cropland, Forest, Grassland, Bare_Land, Herbaceous_Wetland, Woody_Wetland
 ];
-
-// --- Step 1: Merge all new polygons drawn in the UI ---
 var newReferencePolygons = ee.FeatureCollection(listOfNewFeatureCollections).flatten();
-
-// --- Step 2: Validation and Report ---
 print('-----------------------------------------------------------------');
 print('New Reference Sample Export Report:');
 print('Total new polygons for export:', newReferencePolygons.size());
 print('-----------------------------------------------------------------');
 
-// --- Step 3: Export the New Reference Polygon Set to Asset ---
-var outputAssetId = 'projects/ee-xiuneng/assets/2024_landcover_polygons_0704'; // <-- Final output asset path
-
+var outputAssetId = 'projects/user/assets/2024_landcover_polygons; // <-- Final output asset path
 Export.table.toAsset({
   collection: newReferencePolygons, // Export ONLY the new polygons
   description: 'Export_New_2024_Reference_Polygons', // Task name in the Tasks tab
