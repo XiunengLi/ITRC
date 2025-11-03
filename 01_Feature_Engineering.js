@@ -1,6 +1,7 @@
 // ==================================================================================
-// Script 1: Feature Engineering 
-// (Annual Statistical & Key Phenological Sets)
+// Script 1: Feature Engineering
+// Calculate two feature sets (Annual Statistical & Key Phenological Sets),
+// as described in Section 3.2.
 // ==================================================================================
 
 // ----------------------------------------------------------------------------------
