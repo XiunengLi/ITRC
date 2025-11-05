@@ -167,7 +167,6 @@ var enhancedFeatureStack = ee.Image.cat([
   ndviGrowingPeak, eviGrowingPeak, lswiGrowingPeak
 ]).float().clip(aoi);
 
-// Create a unified mask (this set is susceptible to phenological data gaps)
 var masterMask = enhancedFeatureStack.mask().reduce(ee.Reducer.min());
 var enhancedFeatureStackMasked = enhancedFeatureStack.updateMask(masterMask);
 
@@ -183,7 +182,6 @@ var annualRobustFeatureStack = ee.Image.cat([
   distanceFeature 
 ]).float().clip(aoi);
 
-// Apply a self-mask to ensure spatial completeness
 var selfMaskRobust = annualRobustFeatureStack.mask().reduce(ee.Reducer.min());
 annualRobustFeatureStack = annualRobustFeatureStack.updateMask(selfMaskRobust);
 
