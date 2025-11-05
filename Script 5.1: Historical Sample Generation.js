@@ -1,6 +1,6 @@
 // ==================================================================================
 // Script 5.1: Historical Sample Generation (Year 2020)
-// (Implements the Sample Migration & Augmentation strategy from Section 3.3)
+// (Implements the Sample Migration & Augmentation strategy from Section C)
 // ==================================================================================
 
 // ----------------------------------------------------------------------------------
