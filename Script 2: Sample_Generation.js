@@ -1,7 +1,7 @@
 // ==================================================================================
 // Script 2: Reference Year (2024) Sample Generation
 // Description: This script provides the visualization environment for creating the
-// high-fidelity 2024 reference sample polygons (as described in Section 3.3).
+// high-fidelity 2024 reference sample polygons (as described in Section C).
 // ==================================================================================
 
 // ==================================================================================
