@@ -1,6 +1,6 @@
 // ==================================================================================
 // Script 4: Post-Processing Pipeline
-// (Implements Section 3.5 of the paper)
+// (Implements Section E of the paper)
 // ==================================================================================
 // Purpose: 
 //         Refines the "Raw Classification Map" (from Script 3.2) by correcting
