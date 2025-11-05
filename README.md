@@ -61,16 +61,16 @@ The ITRC framework is implemented in a multi-stage process. The scripts are numb
 
 These parameters correspond to the steps detailed in **Section E**:
 
-| Variable Name | Paper Description | Value (Unit) |
+| Variable Name | Paper Description | Unit |
 | :--- | :--- | :--- |
-| `protectionMaskErosionRadius` | Protection mask erosion radius | 1 (pixel) |
-| `largeWaterbodyAreaThreshold`| Area threshold for large river reclassification | 2000 (pixels) |
-| `openingRadius_PondToRiver` | Pond correction opening radius | 0.5 (pixels) |
-| `riverConnectingRadius` | Radius for river connection closing | 2 (pixels) |
-| `largeWaterBufferDistanceMeters`| Buffer distance for water body edge refinement | 2 (pixels) |
-| `swampSlopeThreshold` | Maximum slope threshold for woody swamp | 10 (degrees) |
-| `swampTwiThreshold` | Minimum TWI threshold for woody swamp | 8 (unitless) |
-| `swampWaterDistanceThreshold` | Maximum distance-to-water threshold | 300 (pixels) |
-| `minimumPatchSize` | Minimum size threshold for small patch removal (Sieve) | 8 (pixels) |
-| `finalSmoothingRadius` | Radius for conditional smoothing | 1 (pixel) |
+| `protectionMaskErosionRadius` | Protection mask erosion radius | pixel |
+| `largeWaterbodyAreaThreshold`| Area threshold for large river reclassification | pixels |
+| `openingRadius_PondToRiver` | Pond correction opening radius | pixels |
+| `riverConnectingRadius` | Radius for river connection closing | pixels |
+| `largeWaterBufferDistanceMeters`| Buffer distance for water body edge refinement | pixels |
+| `swampSlopeThreshold` | Maximum slope threshold for woody swamp | degrees |
+| `swampTwiThreshold` | Minimum TWI threshold for woody swamp | unitless |
+| `swampWaterDistanceThreshold` | Maximum distance-to-water threshold | pixels |
+| `minimumPatchSize` | Minimum size threshold for small patch removal (Sieve) | pixels |
+| `finalSmoothingRadius` | Radius for conditional smoothing | pixel |
 
