@@ -8,12 +8,9 @@
 // PART 1: LOAD VISUALIZATION LAYERS
 // ==================================================================================
 
-// --- AOI Definition ---
 var aoi = ee.FeatureCollection('projects/user/assets/aoi');
 Map.addLayer(aoi, {color: 'FFFFFF', strokeWidth: 2, fillColor: '00000000'}, 'Processing & Evaluation AOI', true);
 Map.centerObject(aoi, 8);
-
-// --- Load Feature Stack Asset (from Script 01) ---
 
 var featureStackAssetId = 'projects/user/assets/FeatureStack_Landsat_2024_Enhanced_Masked';
 print('Loading Key Phenological-Stage Feature Set for Visualization: ' + featureStackAssetId);
@@ -25,14 +22,12 @@ try {
   throw new Error('Failed to load Feature Stack Asset.');
 }
 
-// --- Add all visualization layers ---
 if (featureStack2024) {
   // --- A. Base Landsat Band Composites ---
   Map.addLayer(featureStack2024, {bands: ['Red', 'Green', 'Blue'], min: 0, max: 0.3}, 'A. True Color (Annual)', true);
   Map.addLayer(featureStack2024, {bands: ['NIR', 'Red', 'Green'], min: 0, max: 0.4}, 'A. False Color (NIR-R-G)', false);
   Map.addLayer(featureStack2024, {bands: ['SWIR1', 'NIR', 'Red'], min: 0, max: 0.5}, 'A. False Color (SWIR-NIR-R)', false);
 
-  // Define standard palettes
   var ndviPalette = ['FFFFFF', 'CE7E45', 'DF923D', 'F1B555', 'FCD163', '99B718', '74A901', '66A000', '529400', '3E8601', '207401', '056201', '004C00'];
   var waterPalette = ['#d7191c', '#fdae61', '#ffffbf', '#abd9e9', '#2c7bb6']; // Dry (red) to Wet (blue)
   var builtupPalette = ['#006837', '#a6d96a', '#ffffbf', '#fee08b', '#fdae61', '#d73027']; // Green to Red
@@ -61,7 +56,6 @@ if (featureStack2024) {
   Map.addLayer(featureStack2024.select('NDWI_G_NIR_stdDev'), {min: 0, max: 0.4, palette: ['white', 'purple']}, 'D. NDWI Std Dev', false);
 
   // --- E. Key Phenological-Stage Features (Paddy) ---
-  // These layers are critical for discriminating paddy rice, aquaculture, and wetlands
   var riceWaterPalette = ['#a50026','#d73027','#f46d43','#fdae61','#fee090','#ffffbf','#e0f3f8','#abd9e9','#74add1','#4575b4','#313695'];
   var riceVegPalette = ['#8c510a','#d8b365','#f6e8c3','#c7eae5','#5ab4ac','#01665e'];
   Map.addLayer(featureStack2024.select('LSWI_flood'), {min: -0.2, max: 0.8, palette: riceWaterPalette}, 'E. LSWI (Flooding Stage)', false);
