@@ -27,7 +27,6 @@ Map.addLayer(initialClassification, {min: 0, max: 12, palette: 'black'}, 'B. Inp
 print('Loading Topographic Features: ' + featureStackForTopoId);
 var topoFeatures = ee.Image(featureStackForTopoId).select(['Slope', 'TWI']);
 
-// --- Classification Scheme (13-Class) ---
 var riverClassValue = 0;
 var lakeClassValue = 1;
 var reservoirClassValue = 5;
@@ -40,7 +39,13 @@ var palette = [ // 13-color palette for classes 0-12
   'FF0000', 'FFA500', '006400', '9ACD32', 'D2B48C', '90EE90', '556B2F'
 ];
 
-// --- Post-Processing Parameters (per Section 3.7) ---
+// --- Post-Processing Parameters ---
+// *** IMPORTANT NOTE ***
+// The parameter values below are highly optimized for the study area (Yangtze
+// River Delta) and were derived from the sensitivity analysis (Section G).
+// Users MUST calibrate and optimize these parameters for their own study area 
+// and classification scheme. These values are provided for reference only.
+
 var protectionMaskErosionRadius = 1;
 var largeWaterbodyAreaThreshold = 2000; 
 var openingRadius_PondToRiver = 0.5;  
@@ -59,10 +64,8 @@ var currentClassification = initialClassification;
 
 // --- (a) Protection Mask Generation ---
 print('\n--- (a) Generating Non-Water Protection Mask ---');
-// Create a binary mask of all water classes
 var waterClasses = [riverClassValue, lakeClassValue, reservoirClassValue, pondAquacultureClassValue];
 var nonWaterMask = currentClassification.remap(waterClasses, ee.List.repeat(0, waterClasses.length), 1).unmask(1);
-// Erode the non-water mask to create a "core non-water" protection mask
 var protectionMask = nonWaterMask.focal_min(protectionMaskErosionRadius);
 
 // --- (b) Water Body Logical Corrections ---
@@ -77,40 +80,30 @@ currentClassification = currentClassification.where(largeRiverPatchesMask_S2_1, 
 // (b2) Linear Pond Correction: Reclassify elongated "Ponds" as "River"
 var ponds_S2_2 = currentClassification.eq(pondAquacultureClassValue);
 var kernel_S2_2 = ee.Kernel.square({radius: openingRadius_PondToRiver});
-// Apply morphological opening
 var openedPonds_S2_2 = ponds_S2_2.focal_min({kernel: kernel_S2_2}).focal_max({kernel: kernel_S2_2});
-// Find pixels that were removed by the opening (i.e., thin, linear features)
 var pondsToCorrectToRiver_S2_2 = ponds_S2_2.and(openedPonds_S2_2.not());
 currentClassification = currentClassification.where(pondsToCorrectToRiver_S2_2, riverClassValue);
 
 // (b3) River Network Connection (Constrained Closing)
 var rivers_S2_3 = currentClassification.eq(riverClassValue);
 var kernel_S2_3 = ee.Kernel.square({radius: riverConnectingRadius});
-// Dilate rivers
 var dilatedRivers_S2_3 = rivers_S2_3.focal_max({kernel: kernel_S2_3});
-// Constrain dilation to only water areas (prevent leaking into land)
 var constrainedDilatedRivers = dilatedRivers_S2_3.and(protectionMask.not());
-// Erode back to connect segments (morphological closing)
 var connectedRivers_S2_3 = constrainedDilatedRivers.focal_min({kernel: kernel_S2_3});
 currentClassification = currentClassification.where(connectedRivers_S2_3, riverClassValue);
 
 // (b4) Water Body Edge Refinement: Reassign "River" pixels near "Lakes"
 var rivers_S2_4 = currentClassification.eq(riverClassValue);
 var largeWaterbodies_S2_4 = currentClassification.eq(lakeClassValue).or(currentClassification.eq(reservoirClassValue));
-// Get core water areas
 var coreLargeWater_S2_4 = largeWaterbodies_S2_4.focal_min({radius: 1});
-// Find distance to core water
 var distanceToLargeWater_S2_4 = coreLargeWater_S2_4.fastDistanceTransform(256, 'pixels').sqrt();
-// Create a buffer mask
 var largeWaterBufferMask_S2_4 = distanceToLargeWater_S2_4.lte(largeWaterBufferDistanceMeters);
-// Find rivers that fall within this buffer
 var riversOnEdge_S2_4 = rivers_S2_4.and(largeWaterBufferMask_S2_4);
 currentClassification = currentClassification.where(riversOnEdge_S2_4, lakeClassValue);
 
 // --- (c) Topographic Correction of Wetlands ---
 print('\n--- (c) Correcting Topographic Unsuitable Wetlands ---');
 var classificationAfterWaterFix = currentClassification;
-// Create a new total water mask from the *corrected* water classes
 var totalWaterMask = classificationAfterWaterFix.remap(waterClasses, ee.List.repeat(1, waterClasses.length), 0).unmask(0);
 var distanceToAnyWater = totalWaterMask.fastDistanceTransform(1024, 'pixels').sqrt();
 var woodySwampMask_S3 = classificationAfterWaterFix.eq(woodySwampClassValue);
