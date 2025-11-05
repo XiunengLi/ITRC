@@ -22,13 +22,9 @@ var samples2024 = ee.FeatureCollection(samples2024Id);
 // 2. VISUALIZATION SETUP (Ancillary Data for Augmentation)
 // ----------------------------------------------------------------------------------
 print('Setting up map visualization for manual augmentation...');
-
-// --- Load the 2020 Feature Stacks for Visualization ---
 print('--- Loading 2020 Feature Stacks for Visualization ---');
 var enhancedStack_2020 = ee.Image(enhancedFeatureStackId_2020);
 var robustStack_2020 = ee.Image(annualRobustFeatureStackId_2020);
-
-// --- Visualization of ROBUST ANNUAL Features (Annual Statistical Set) ---
 print('-> Adding visualization layers from Robust Annual Stack...');
 Map.addLayer(robustStack_2020.clip(aoi.geometry()),
    {bands: ['Red', 'Green', 'Blue'], min: 0, max: 0.3},
@@ -52,7 +48,6 @@ Map.addLayer(robustStack_2020.select('MNDWI_G_SWIR1_stdDev'),
   {min: 0, max: 0.4, palette: ['white', 'cyan']},
   'MNDWI Std Dev (Annual Robust)', false);
 
-// --- Visualization of ENHANCED PHENOLOGY Features (Key Phenological-Stage Set) ---
 print('-> Adding visualization layers from Enhanced Phenology Stack...');
 var riceWaterPalette = ['#a50026','#d73027','#f46d43','#fdae61','#fee090','#ffffbf','#e0f3f8','#abd9e9','#74add1','#4575b4','#313695'];
 var riceVegPalette = ['#8c510a','#d8b365','#f6e8c3','#c7eae5','#5ab4ac','#01665e'];
@@ -74,11 +69,7 @@ Map.addLayer(enhancedStack_2020.select('EVI_peak'),
 Map.addLayer(enhancedStack_2020.select('LSWI_m_NDVI_flood'),
   {min: -0.5, max: 1, palette: ['red','yellow','blue']},
   'LSWI-NDVI (Flooding Stage)', false);
-  
-// --- Add Change Mask and 2024 Samples for Context ---
-// Display the change-affected areas (value=1) as a semi-transparent layer
 Map.addLayer(changeMask.selfMask(), {palette: 'orange', opacity: 0.5}, 'Change-Affected Areas (for Augmentation)');
-// Display the 2024 samples as a reference
 Map.addLayer(samples2024, {color: 'FF0000', fillColor: '00000000'}, '2024 Reference Samples (Original)');
 
 
@@ -86,20 +77,14 @@ Map.addLayer(samples2024, {color: 'FF0000', fillColor: '00000000'}, '2024 Refere
 // 3. Step (a): Sample Migration (from Stable Zones)
 // ----------------------------------------------------------------------------------
 print('\n--- Step (a): Migrating samples from stable zones ---');
-
-// Create a mask for stable zones (where changeMask is 0)
 var stableMask = changeMask.eq(0);
-
-// For each 2024 sample polygon, calculate the percentage of its area that is "stable".
 var samplesWithStableArea = stableMask.rename('stable').reduceRegions({
   collection: samples2024,
   reducer: ee.Reducer.mean(), // mean of a binary mask = percentage of area
   scale: 30
 });
 
-// Inherit samples with >95% spatial overlap with stable zones (per Sec 3.3)
-var stabilityThreshold = 0.95;
-
+var stabilityThreshold = 0.95; // Inherit samples with >95% spatial overlap with stable zones
 var stableSamplesFor2020 = samplesWithStableArea.filter(
   ee.Filter.gte('mean', stabilityThreshold)
 );
