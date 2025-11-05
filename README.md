@@ -57,8 +57,6 @@ The ITRC framework is implemented in a multi-stage process. The scripts are numb
 
 ## Key Tunable Parameters
 
-The ITRC framework relies on several key parameters that were optimized and validated (Section G). The values used in the manuscript are defined in the respective scripts.
-
 ### Post-Processing Parameters (Script 4: Post-Processing.js)
 
 These parameters correspond to the steps detailed in **Section E**:
@@ -76,15 +74,3 @@ These parameters correspond to the steps detailed in **Section E**:
 | `minimumPatchSize` | Minimum size threshold for small patch removal (Sieve) | 8 (pixels) |
 | `finalSmoothingRadius` | Radius for conditional smoothing | 1 (pixel) |
 
-### Temporal Correction Parameters (Scripts 5 & 6)
-
-These parameters correspond to steps in **Section C** and **Section F**:
-
-| Variable Name | Paper Description | Value (Unit) |
-| :--- | :--- | :--- |
-| `cvaThreshold` | CVA change magnitude threshold | 0.5 (unitless) |
-| `cvaOpeningRadius` | Opening radius for CVA mask refinement | 1 (pixel) |
-| `cvaClosingRadius` | Closing radius for CVA mask refinement | 2 (pixels) |
-| `migrationOverlapThreshold` | Minimum overlap for sample migration | 0.95 (95%) |
-| `stableUrbanErosionRadius` | Erosion radius for stable urban cores | 2 (pixels) |
-| `medianFilterRadius` | Median filter radius for global smoothing | 1 (pixel) |
