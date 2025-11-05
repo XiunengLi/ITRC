@@ -18,7 +18,6 @@ Map.addLayer(processingAndEvalAoi, {color: '009999'}, 'Processing & Evaluation A
 var featureStackAssetId = 'projects/user/assets/FeatureStack_Landsat_2024_Enhanced_Masked'; 
 var trainingSamplesAssetId = 'projects/user/assets/2024_landcover_polygons';
 
-// --- Classification Parameters ---
 var classProperty = 'landcover';
 var numberOfClasses = 13;
 var seed = 0;
@@ -40,7 +39,6 @@ var palette = [
   '556B2F'  // 12: Woody_Wetland
 ];
 
-// --- Load Feature Stack (Key Phenological-Stage Feature Set) ---
 print('Loading Key Phenological-Stage Feature Set (Asset): ' + featureStackAssetId);
 var featureStack2024;
 try {
@@ -53,7 +51,6 @@ try {
 }
 var bandsForTraining = featureStack2024.bandNames();
 
-// --- Load Training Samples (Reference Year Polygons) ---
 print('Loading Training Samples Asset: ' + trainingSamplesAssetId);
 var trainingSamplesAllRaw;
 try {
