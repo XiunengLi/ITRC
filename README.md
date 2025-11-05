@@ -13,7 +13,7 @@ If you use this code or methodology in your research, please cite our paper:
 > [-]
 
 ## Workflow and Code Structure
-The ITRC framework is implemented in a multi-stage process. The scripts are numbered and must be executed in the order listed below. The steps correspond to the methods described in **Section 3** of the main paper.
+The ITRC framework is implemented in a multi-stage process. The scripts are numbered and must be executed in the order listed below. The steps correspond to the methods described in **Section III Methodology** of the main paper.
 
 ---
 
