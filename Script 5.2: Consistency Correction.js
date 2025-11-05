@@ -6,19 +6,13 @@
 // ----------------------------------------------------------------------------------
 // 1. SETUP: LOAD DATA AND DEFINE PARAMETERS
 // ----------------------------------------------------------------------------------
-
-// --- Define Area of Interest (AOI) ---
 var aoi = ee.FeatureCollection('projects/user/assets/aoi');
 Map.centerObject(aoi, 9);
 Map.addLayer(aoi, {color: 'FFFFFF', strokeWidth: 2, fillColor: '00000000'}, 'A. Processing & Evaluation AOI', true);
 
-// --- Asset IDs for Final ("Refined") Classification Maps ---
-// The "Refined Reference Map" (2024) serves as the baseline (from Script 4).
-var map2024_Id = 'projects/user/assets/LULC_2024_Final_FullPostProcess';
-// The "Refined Historical Map" (2020) is the one to be corrected (from Script 4).
-var map2020_Id = 'projects/user/assets/LULC_2020_Final_FullPostProcess';
+var map2024_Id = ''; //refined 2024 map
+var map2020_Id = ''; //refined 2024 map
 
-// --- Classification Scheme (13-Class) - Matched to Paper Terminology ---
 var riverValue = 0;
 var lakeValue = 1;
 var mudflatValue = 2;              
@@ -65,9 +59,9 @@ Map.addLayer(initialDisagreementMask.selfMask(), {palette: 'yellow'}, 'Initial D
 print('Initial disagreement mask generated.');
 
 // ----------------------------------------------------------------------------------
-// 3. Post-Classification Logical Consistency Constraints (Sec 3.6c)
+// 3. Post-Classification Logical Consistency Constraints 
 // ----------------------------------------------------------------------------------
-print('\n--- Step 2: Applying logical consistency rules (Sec 3.6c) ---');
+print('\n--- Step 2: Applying logical consistency rules ---');
 
 var stableUrbanMask = map2024.eq(builtUpValue).and(map2020.eq(builtUpValue));
 var stableUrbanCore = stableUrbanMask.focal_min(2); // Erode to get core urban nuclei.
@@ -125,22 +119,7 @@ print('\n--- Step 4: Generating final logically corrected 2020 map ---');
 
 var finalConsistentMap2020 = map2024.where(finalChangeMask, map2020).rename('LULC_2020_Consistent');
 Map.addLayer(finalConsistentMap2020, {min: 0, max: 12, palette: palette}, 'Final Logically Corrected 2020 Map', false);
-
-// ----------------------------------------------------------------------------------
-// 6. EXPORT FINAL PRODUCTS
-// ----------------------------------------------------------------------------------
-print('\n>>> Preparing export tasks for final products... <<<');
-var exportRegion = aoi.geometry();
-
-Export.image.toDrive({
-  image: finalConsistentMap2020.toByte(),
-  description: 'LULC_2020_Final_Consistent',
-  folder: 'GEE_LULC_Change_Analysis_Final',
-  fileNamePrefix: 'LULC_2020_Final_Consistent',
-  region: exportRegion, scale: 30, maxPixels: 1e13
-});
-
-print('Export tasks created. Please check the "Tasks" tab.');
+print('\n>>> Success! Final Logically Corrected 2020 Map <<<');
 
 // ==================================================================================
 // END OF SCRIPT 5.2
