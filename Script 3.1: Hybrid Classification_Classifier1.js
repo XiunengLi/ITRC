@@ -3,7 +3,7 @@
 // ==================================================================================
 // Purpose:
 // Trains the first RF classifier using the 'Key Phenological-Stage Feature Set'
-//            (as described in Section 3.4). This produces the high-accuracy,
+//            (as described in Section D). This produces the high-accuracy,
 //            but potentially gappy, map (Result 1).
 // ==================================================================================
 
